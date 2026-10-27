@@ -1,0 +1,21 @@
+/* Shared Tailwind v4 design tokens for both independently built apps. */
+@theme {
+  --color-ink: #19392e;
+  --color-portal-green: #166449;
+  --color-portal-green-hover: #10503a;
+  --color-line: #e3e8e2;
+  --color-muted: #78857d;
+  --color-paper: #f7f9f5;
+  --color-accent: #d5ef8d;
+  --font-sans: 'DM Sans', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: normal;
+  }
+}

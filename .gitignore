@@ -1,0 +1,30 @@
+# Dependencies and generated Next.js files
+node_modules/
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+*.tsbuildinfo
+coverage/
+.turbo/
+.vercel/
+playwright-report/
+test-results/
+
+# Machine-local settings and credentials
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.iml
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.log
+*.hprof
+.DS_Store
+Thumbs.db

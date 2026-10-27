@@ -1,0 +1,29 @@
+{
+  "name": "next-portal-frontend",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev:admin": "npm run dev --workspace @portal/admin",
+    "dev:user": "npm run dev --workspace @portal/user",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "eslint apps",
+    "test:admin": "node --experimental-strip-types --experimental-default-type=module --test tests/api.test.ts"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^10.13.0",
+    "eslint-config-next": "16.4.3",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}
