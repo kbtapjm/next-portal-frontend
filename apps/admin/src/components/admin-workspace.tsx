@@ -68,12 +68,11 @@ function Workspace({ me, onMeChange, onLogout, busy, error }: { me: Member; onMe
   const roleAccess = can(me, 'role:read') || can(me, 'role:manage');
   const [screen, setScreen] = useState<Screen>(() => memberAccess ? 'members' : roleAccess ? 'roles' : 'account');
   const roles = useResource<PortalRole[]>(can(me, 'role:read') ? '/roles' : null);
-  const navigation: { id: Screen; label: string; number: string; enabled: boolean }[] = [
+  const navigation: { id: Exclude<Screen, 'account'>; label: string; number: string; enabled: boolean }[] = [
     { id: 'members', label: '사용자 관리', number: '01', enabled: memberAccess },
     { id: 'roles', label: '역할·권한 관리', number: '02', enabled: roleAccess },
-    { id: 'account', label: '내 정보·권한', number: '03', enabled: true },
   ];
-  const title = navigation.find(item => item.id === screen)?.label;
+  const title = screen === 'account' ? '내 정보' : navigation.find(item => item.id === screen)?.label;
   const menu = navigation.filter(item => item.enabled).map(item => <button type="button" key={item.id} aria-current={screen === item.id ? 'page' : undefined} onClick={() => setScreen(item.id)}
     className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3.5 text-left text-sm transition-colors ${screen === item.id ? 'bg-[#edf3e9] font-semibold text-portal-green' : 'text-muted hover:bg-paper hover:text-ink'}`}><span className="text-[10px] opacity-65">{item.number}</span>{item.label}</button>);
   return <div className="min-h-screen">
@@ -83,8 +82,15 @@ function Workspace({ me, onMeChange, onLogout, busy, error }: { me: Member; onMe
       <p className="mt-8 text-[9px] tracking-[2px] text-muted">ADMIN WORKSPACE</p><nav aria-label="관리자 메뉴" className="mt-5 grid gap-1">{menu}</nav>
       <div className="mt-auto border-t border-line pt-5"><div className="mb-3 flex items-center gap-3"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-sm text-white">{me.name.slice(0, 1)}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{me.name}</p><p className="mt-1 truncate text-[11px] text-muted">{me.email}</p></div></div><RoleBadges codes={me.roles} roles={roles.data} /></div>
     </aside>
-    <div className="lg:ml-60"><header className="flex h-18 items-center justify-between gap-4 border-b border-line bg-white px-5 md:px-9"><p className="text-xs"><span className="text-muted">워크스페이스</span><span className="mx-3 text-[#bcc6bd]">/</span>{title}</p><button type="button" className="cursor-pointer whitespace-nowrap rounded-lg px-3 py-2 text-xs hover:bg-paper disabled:opacity-40" disabled={busy} onClick={onLogout}>{busy ? '로그아웃 중…' : '로그아웃 ↗'}</button></header>
-      <nav aria-label="모바일 관리자 메뉴" className="flex gap-1 overflow-x-auto border-b border-line bg-white px-3 lg:hidden">{menu}</nav>
+    <div className="lg:ml-60"><header className="flex min-h-18 items-center justify-between gap-3 border-b border-line bg-white px-5 py-3 md:px-9"><p className="min-w-0 text-xs"><span className="hidden text-muted sm:inline">워크스페이스</span><span className="mx-3 hidden text-[#bcc6bd] sm:inline">/</span>{title}</p><div className="flex shrink-0 items-center gap-1">
+        <button type="button" aria-current={screen === 'account' ? 'page' : undefined} disabled={busy} onClick={() => setScreen('account')}
+          className={`inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-portal-green disabled:opacity-40 ${screen === 'account' ? 'bg-[#edf3e9] font-semibold text-portal-green' : 'hover:bg-paper'}`}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg>
+          내 정보
+        </button>
+        <button type="button" className="cursor-pointer whitespace-nowrap rounded-lg px-3 py-2 text-xs hover:bg-paper disabled:opacity-40" disabled={busy} onClick={onLogout}>{busy ? '로그아웃 중…' : '로그아웃 ↗'}</button>
+      </div></header>
+      {menu.length > 0 && <nav aria-label="모바일 관리자 메뉴" className="flex gap-1 overflow-x-auto border-b border-line bg-white px-3 lg:hidden">{menu}</nav>}
       <main id="admin-content" className="mx-auto max-w-[1440px] space-y-6 px-5 py-8 md:px-9 md:py-10"><Feedback message={error} />
         {screen === 'members' && memberAccess && <MembersPanel me={me} roles={roles.data} rolesError={roles.error} onMeChange={onMeChange} />}
         {screen === 'roles' && roleAccess && <RolesPanel me={me} roles={roles.data} loading={roles.loading} error={roles.error} onReload={roles.reload} />}
